@@ -11,33 +11,39 @@ int cmpEnvelopes(const void *a, const void *b) {
     }
 }
 
+// lower_bound: primeiro índice com valor >= target
+int lower_bound_int(int *arr, int n, int target) {
+    int l = 0, r = n;
+    while (l < r) {
+        int mid = l + (r - l) / 2;
+        if (arr[mid] < target) {
+            l = mid + 1;
+        } else {
+            r = mid;
+        }
+    }
+    return l;
+}
+
 int maxEnvelopes(int** envelopes, int envelopesSize, int* envelopesColSize){
     (void)envelopesColSize;
     if (envelopesSize == 0) return 0;
 
     qsort(envelopes, envelopesSize, sizeof(int*), cmpEnvelopes);
 
-    int *heights = (int *)malloc(sizeof(int) * envelopesSize);
-    for (int i = 0; i < envelopesSize; i++) {
-        heights[i] = envelopes[i][1];
-    }
-
-    // LIS O(n^2)
-    int *dp = (int *)malloc(sizeof(int) * envelopesSize);
-    int maxLen = 0;
+    int *lis = (int *)malloc(sizeof(int) * envelopesSize);
+    int len = 0;
 
     for (int i = 0; i < envelopesSize; i++) {
-        dp[i] = 1;
-        for (int j = 0; j < i; j++) {
-            if (heights[j] < heights[i] && dp[j] + 1 > dp[i]) {
-                dp[i] = dp[j] + 1;
-            }
+        int h = envelopes[i][1];
+        int pos = lower_bound_int(lis, len, h);
+        if (pos == len) {
+            lis[len++] = h;
+        } else {
+            lis[pos] = h;
         }
-        if (dp[i] > maxLen) maxLen = dp[i];
     }
 
-    free(heights);
-    free(dp);
-
-    return maxLen;
+    free(lis);
+    return len;
 }
