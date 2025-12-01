@@ -7,4 +7,3 @@
 | 2008 | Medium | Maximum Earnings From Taxi | [Guilherme Storch](https://github.com/storch7) | https://leetcode.com/problems/maximum-earnings-from-taxi/ |
 | 354 | Hard | Russian Doll Envelopes | [Guilherme Storch](https://github.com/storch7) | https://leetcode.com/problems/russian-doll-envelopes/ |
 | 879 | Hard | Profitable Schemes | [Guilherme Storch](https://github.com/storch7) | https://leetcode.com/problems/profitable-schemes/ |
-| 583 | Medium | Delete Operation for Two Strings | [Guilherme Storch](https://github.com/storch7) | https://leetcode.com/problems/delete-operation-for-two-strings/ |
