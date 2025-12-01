@@ -10,7 +10,7 @@ struct Job {
 
 class Solution {
 public:
-    bool compareFinish(const Job& a, const Job& b) {
+    static bool compareFinish(const Job& a, const Job& b) {
         return a.end < b.end;
     }
 
@@ -22,7 +22,7 @@ public:
         vector<Job> jobs;
 
         for (int i = 0; i < n; i++) {
-            jobs.push_back({startTime[i], endTime[i], profit[i]})
+            jobs.push_back({startTime[i], endTime[i], profit[i]});
         }
 
         sort(jobs.begin(), jobs.end(), compareFinish);
@@ -30,7 +30,7 @@ public:
         p.assign(n, -1);
         pFunction(jobs, n);
 
-        memo.assign(n -1);
+        memo.assign(n, -1);
 
         return opt(n-1, jobs);
     }
