@@ -13,11 +13,23 @@ int cmpIntervalByEnd(const void *a, const void *b) {
     return ia->start - ib->start;
 }
 
+// upper_bound: primeiro índice com valor > target
+int upper_bound(int *arr, int n, int target) {
+    int l = 0, r = n;
+    while (l < r) {
+        int mid = l + (r - l) / 2;
+        if (arr[mid] <= target) {
+            l = mid + 1;
+        } else {
+            r = mid;
+        }
+    }
+    return l;
+}
+
 long long maxTaxiEarnings(int n, int** rides, int ridesSize, int* ridesColSize){
     (void)n;
     (void)ridesColSize;
-
-    if (ridesSize == 0) return 0;
 
     Interval *intervals = (Interval *)malloc(sizeof(Interval) * ridesSize);
     for (int i = 0; i < ridesSize; i++) {
@@ -30,30 +42,31 @@ long long maxTaxiEarnings(int n, int** rides, int ridesSize, int* ridesColSize){
         intervals[i].profit = profit;
     }
 
-    // 1) Ordena por end
     qsort(intervals, ridesSize, sizeof(Interval), cmpIntervalByEnd);
 
-    // 2) DP simples: dp[i] = melhor lucro usando corridas até i
-    long long *dp = (long long *)malloc(sizeof(long long) * ridesSize);
-    dp[0] = intervals[0].profit;
-
-    for (int i = 1; i < ridesSize; i++) {
-        long long best = dp[i - 1]; // não pegar i
-
-        long long take = intervals[i].profit;
-        for (int j = i - 1; j >= 0; j--) {
-            if (intervals[j].end <= intervals[i].start) {
-                take += dp[j];
-                break;
-            }
-        }
-        if (take > best) best = take;
-        dp[i] = best;
+    int *ends = (int *)malloc(sizeof(int) * ridesSize);
+    for (int i = 0; i < ridesSize; i++) {
+        ends[i] = intervals[i].end;
     }
 
-    long long ans = dp[ridesSize - 1];
+    long long *dp = (long long *)malloc(sizeof(long long) * (ridesSize + 1));
+    dp[0] = 0;
+
+    for (int i = 1; i <= ridesSize; i++) {
+        int start_i = intervals[i - 1].start;
+        long long profit_i = intervals[i - 1].profit;
+
+        int j = upper_bound(ends, i - 1, start_i);
+
+        long long without = dp[i - 1];
+        long long with = profit_i + dp[j];
+        dp[i] = (without > with) ? without : with;
+    }
+
+    long long ans = dp[ridesSize];
 
     free(intervals);
+    free(ends);
     free(dp);
 
     return ans;
