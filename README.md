@@ -1,5 +1,7 @@
 # Programação dinâmica
 
+[Video de apresentacao](https://www.youtube.com/watch?v=GYrIZpDUvUU)
+
 ## Exercícios escolhidos para resolução
 
 | EXERCÍCIO | DIFICULDADE | TÍTULO | RESPONSÁVEL | LINK DE ACESSO |
