@@ -6,11 +6,19 @@ typedef struct {
     long long profit;
 } Interval;
 
+int cmpIntervalByEnd(const void *a, const void *b) {
+    const Interval *ia = (const Interval *)a;
+    const Interval *ib = (const Interval *)b;
+    if (ia->end != ib->end) return ia->end - ib->end;
+    return ia->start - ib->start;
+}
+
 long long maxTaxiEarnings(int n, int** rides, int ridesSize, int* ridesColSize){
     (void)n;
     (void)ridesColSize;
 
-    // Monta vetor de intervalos com o lucro calculado
+    if (ridesSize == 0) return 0;
+
     Interval *intervals = (Interval *)malloc(sizeof(Interval) * ridesSize);
     for (int i = 0; i < ridesSize; i++) {
         int start = rides[i][0];
@@ -22,13 +30,31 @@ long long maxTaxiEarnings(int n, int** rides, int ridesSize, int* ridesColSize){
         intervals[i].profit = profit;
     }
 
-    // Ainda não fazemos a lógica de ordenação e DP
-    // Apenas somamos todos os lucros como teste (obviamente errado, só para ver valores)
-    long long total = 0;
-    for (int i = 0; i < ridesSize; i++) {
-        total += intervals[i].profit;
+    // 1) Ordena por end
+    qsort(intervals, ridesSize, sizeof(Interval), cmpIntervalByEnd);
+
+    // 2) DP simples: dp[i] = melhor lucro usando corridas até i
+    long long *dp = (long long *)malloc(sizeof(long long) * ridesSize);
+    dp[0] = intervals[0].profit;
+
+    for (int i = 1; i < ridesSize; i++) {
+        long long best = dp[i - 1]; // não pegar i
+
+        long long take = intervals[i].profit;
+        for (int j = i - 1; j >= 0; j--) {
+            if (intervals[j].end <= intervals[i].start) {
+                take += dp[j];
+                break;
+            }
+        }
+        if (take > best) best = take;
+        dp[i] = best;
     }
 
+    long long ans = dp[ridesSize - 1];
+
     free(intervals);
-    return total; // placeholder: soma bruta (não é a resposta correta)
+    free(dp);
+
+    return ans;
 }
